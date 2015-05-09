@@ -1,0 +1,110 @@
+---
+title: "ToothGrowth data analysis"
+author: "Ching-Yen"
+date: "Friday, May 08, 2015"
+output: html_document
+---
+This project will perform exploratory data analysis to the ToothGrowth data.
+
+## Data Overview
+
+In order to have a better understand of the dataset, I perform some basic exploratory analysis.
+
+```{r}
+library(ggplot2)
+data <- ToothGrowth
+summary(data)
+```
+```{r}
+table(data$dose)
+```
+
+The 60 observations are evenly distributed into three dose levels.
+
+```{r}
+table(data[data$supp == "OJ","dose"])
+```
+```{r}
+table(data[data$supp == "VC","dose"])
+```
+
+Two supplement groups are also evenly distributed.
+
+```{r}
+qplot(dose, len, data = data, colour = supp, main = "Tooth Growth with Dose",
+xlab = "Dose in milligrams", ylab = "Tooth length")
+```
+
+```{r}
+qplot(supp, len, data = data, colour = factor(dose),
+main = "Tooth Growth with Supplement Type",
+xlab = "Supplement type", ylab = "Tooth length")
+```
+
+The Tooth Growth plots indicate that there is a positive correlation between dose level and tooth level, specially in the group with supplement type "VC".
+
+## Compare the tooth length by supplement types
+
+The subjects are not paired, but two supplement groups have the same variance. Perfomed a T test on the
+tooth length based on two different supplement types, with the null hypothesis of two groups having the
+same mean.
+
+```{r}
+t1 <- t.test(len ~ supp, paired=F, var.equal = T, data = data)
+t1
+```
+
+Although the mean of tooth length using supplement OJ, 20.66, is different from the mean of tooth length using supplement VC, 16.96, the 95% confidence interval for this T  test is between -0.17 and 7.57, which covers 0, and the p-value is 0.06, which is bigger than 5%. This suggests that I don't have enough evidence to reject null hypothesis, thus the means of two groups are not significantly different.
+
+## Compare the tooth length by dose
+The subjects are not paired, but three groups have the same variance. Perfomed T-tests on the tooth length based on three dose levels.
+
+```{r}
+dose_1 <- subset(data, data$dose == 0.5)
+dose_2 <- subset(data, data$dose == 1)
+dose_3 <- subset(data, data$dose == 2)
+t2 <- t.test(dose_1$len, dose_2$len, paired=F, var.equal = T)
+t2
+```
+
+In the above T-test, I tested the difference of the tooth length between two dose level(0.5mg v.s. 1mg).The 95% confident interval is between -11.98 and -6.28, which doesn't cover 0. This suggests we have enough confidence to reject the null hypothesis, and the mean of tooth length for these two group are significantly different from each other.
+
+```{r}
+t3 <- t.test(dose_2$len, dose_3$len, paired=F, var.equal = T)
+t3
+```
+
+In the above T-test, I tested the difference of the tooth length between two dose level(1mg v.s. 2mg).The 95% confident interval is between -8.99 and -3.73, which doesn't cover 0. Again, this suggests we have enough confidence to reject the null hypothesis, and the mean of tooth length for these two group are significantly different from each other.
+
+Based on the above T-test, we can conclude that the tooth length increases as dose level increases.
+
+## Compare the tooth length by supplement and dose
+
+Since I already proved the significant differences of tooth length exist between dose levels, and failed to prove the difference between supplement types, I would like to further test the possible tooth length differences between supplement types within each dose level.
+
+### Dose level = 0.5 mg
+```{r}
+t4 <- t.test(len ~ supp, paired=F, var.equal = T, data = dose_1)
+t4
+```
+
+In this T-test, I tested the difference the tooth length between the supplement types "OJ" and "VC" at 0.5 mg dose level. The 95% confident interval is between 1.77 and 8.73, which doesn't cover 0. This suggests we have more than 95% confidence to reject the null hypothesis. When the dose level is 0.5 mg, subjects that has being given supplement type "OJ" have bigger mean tooth length than the subjects with supplement type "VC".
+
+### Dose level = 1 mg
+```{r}
+t5 <- t.test(len ~ supp, paired=F, var.equal = T, data = dose_2)
+t5
+```
+
+Similar to the previous T-test, I changed the dose level to 1 mg. The 95% confident interval doesn't cover 0. Thus when the dose level is 1 mg, subjects that has being given supplement type "OJ" have bigger mean tooth length than the subjects with supplement type "VC". 
+
+### Dose level = 2 mg
+```{r}
+t6 <- t.test(len ~ supp, paired=F, var.equal = T, data = dose_3)
+t6
+```
+
+As the result showed above, the 95% confident interval is between -3.72 and 3.56, which covers 0. It suggests we don't have enought confidence to reject the null hypothesis. In fact, since the p.value for the alternative hypothesis, true difference in means is not equal to 0, is 1 minus the p-value of null hypothesis, which is 0.0363, which is smaller than 5%. We have more than 95% confidence to reject the alternative hypothesis, and validate the null hypothesis. When the dose level is 2 mg, subjects that have being given supplement type "OJ" have the same mean tooth length as the
+subjects with supplement type "VC".
+
+
