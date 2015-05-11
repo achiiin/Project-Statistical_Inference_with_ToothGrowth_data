@@ -118,8 +118,8 @@ t1</code></pre>
 <p>The subjects are not paired, but three groups have the same variance. Perfomed T-tests on the tooth length based on three dose levels.</p>
 <pre class="r"><code>dose_1 &lt;- subset(data, data$dose == 0.5)
 dose_2 &lt;- subset(data, data$dose == 1)
-dose_3 &lt;- subset(data, data$dose == 2)
-t2 &lt;- t.test(dose_1$len, dose_2$len, paired=F, var.equal = T)
+dose_3 &lt;- subset(data, data$dose == 2)</code></pre>
+<pre class="r"><code>t2 &lt;- t.test(dose_1$len, dose_2$len, paired=F, var.equal = T)
 t2</code></pre>
 <pre><code>## 
 ##  Two Sample t-test
@@ -203,6 +203,15 @@ t6</code></pre>
 ##            26.06            26.14</code></pre>
 <p>As the result showed above, the 95% confident interval is between -3.72 and 3.56, which covers 0. It suggests we don’t have enought confidence to reject the null hypothesis. In fact, since the p.value for the alternative hypothesis, true difference in means is not equal to 0, is 1 minus the p-value of null hypothesis, which is 0.0363, which is smaller than 5%. We have more than 95% confidence to reject the alternative hypothesis, and validate the null hypothesis. When the dose level is 2 mg, subjects that have being given supplement type “OJ” have the same mean tooth length as the subjects with supplement type “VC”.</p>
 </div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Based on the confidence intervals and the hypothesis tests I performed, I inferred the following conclusions.</p>
+<ul>
+<li>The means of tooth length of two supplement type groups are not significantly different.</li>
+<li>The tooth length increases as dose level increases.</li>
+<li>When the dose levels are 0.5 milligram and 1 milligram, the subjects that has being given supplement type “OJ” have bigger mean tooth length than the subjects with supplement type “VC”. But when the dose level is 2 milligram, the means of the two supplement types are same.</li>
+</ul>
 </div>
 
 
